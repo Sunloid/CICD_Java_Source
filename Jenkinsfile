@@ -85,7 +85,7 @@ pipeline {
 		        script {
 		            // ECS Cluster and Service configuration
 		            def ecsCluster = "cicd-cluster1"
-		            def appServiceName = "cicd-service1"  
+		            def appServiceName = "cicd-service2"  
 		
 		            // ECS Task Definitions
 		            // def appTaskDefinition = "cicd-task"  
