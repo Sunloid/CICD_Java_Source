@@ -41,29 +41,6 @@ pipeline {
         }
 
 
-        stage("UploadArtifact"){
-            steps{
-                nexusArtifactUploader(
-                  nexusVersion: 'nexus3',
-                  protocol: 'http',
-                  // The IP address below needs to be changed with the whatever the Private IP address of the Nexus Instance is.
-                  nexusUrl: '172.31.4.60:8081',
-                  groupId: 'QA',
-                  version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
-                  // Make sure the nexus has a repository with the exact same name below. 
-                  repository: 'First-repo',
-                  // Make sure the credentials ID in Jenkins has the exact same name below.
-                  credentialsId: 'nexuslogin',
-                  artifacts: [
-                    [artifactId: 'vprofile',
-                     classifier: '',
-                     file: 'target/vprofile-v2.war',
-                     type: 'war']
-    ]
- )
-            }
-        }
-
         stage("Build image and deploy it to ecr"){
             steps{
                 script{
