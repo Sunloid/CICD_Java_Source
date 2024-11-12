@@ -3,6 +3,7 @@ pipeline {
     tools {
 	    maven "MAVEN3"
 	    jdk "OracleJDK8"
+        docker "Docker"
 	}
     stages{
         stage('Fetch code') {
@@ -92,7 +93,7 @@ pipeline {
                 script{
                      sh """
                         # Step 1: Authenticate Docker with Amazon ECR in the us-east-1 region
-                        aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 347735122858.dkr.ecr.us-east-1.amazonaws.com
+                        aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 533267397460.dkr.ecr.ap-south-1.amazonaws.com
                         
                         # Step 2: Build the Docker image for the 'app' service with the specified build number
                         docker build -t app:${BUILD_NUMBER} ./app_dockerfile/.
@@ -104,21 +105,22 @@ pipeline {
                         docker build -t db:${BUILD_NUMBER}  ./db_dockerfile/.
                         
                         # Step 5: Tag the 'app' Docker image with the ECR repository and build number
-                        docker tag app:${BUILD_NUMBER} 347735122858.dkr.ecr.us-east-1.amazonaws.com/cicd-repo:app${BUILD_NUMBER}
+                        docker tag app:${BUILD_NUMBER} 533267397460.dkr.ecr.ap-south-1.amazonaws.com/cicd-repo:app${BUILD_NUMBER}
                         
                         # Step 6: Tag the 'web' Docker image with the ECR repository and build number
-                        docker tag web:${BUILD_NUMBER} 347735122858.dkr.ecr.us-east-1.amazonaws.com/cicd-repo:web${BUILD_NUMBER}
+                        docker tag web:${BUILD_NUMBER} 533267397460.dkr.ecr.ap-south-1.amazonaws.com/cicd-repo:web${BUILD_NUMBER}
                         
                         # Step 7: Tag the 'db' Docker image with the ECR repository and build number
-                        docker tag db:${BUILD_NUMBER} 347735122858.dkr.ecr.us-east-1.amazonaws.com/cicd-repo:db${BUILD_NUMBER}
-                            # Push the app image
-                        docker push 347735122858.dkr.ecr.us-east-1.amazonaws.com/cicd-repo:app${BUILD_NUMBER}
+                        docker tag db:${BUILD_NUMBER} 533267397460.dkr.ecr.ap-south-1.amazonaws.com/cicd-repo:db${BUILD_NUMBER}
+                        
+                        # Push the app image
+                        docker push 533267397460.dkr.ecr.ap-south-1.amazonaws.com/cicd-repo:app${BUILD_NUMBER}
                         
                         # Push the web image
-                        docker push 347735122858.dkr.ecr.us-east-1.amazonaws.com/cicd-repo:web${BUILD_NUMBER}
+                        docker push 533267397460.dkr.ecr.ap-south-1.amazonaws.com/cicd-repo:web${BUILD_NUMBER}
                         
                         # Push the db image
-                        docker push 347735122858.dkr.ecr.us-east-1.amazonaws.com/cicd-repo:db${BUILD_NUMBER}
+                        docker push 533267397460.dkr.ecr.ap-south-1.amazonaws.com/cicd-repo:db${BUILD_NUMBER}
 
                     """
                 }
@@ -130,12 +132,12 @@ pipeline {
 		        script {
 		            // ECS Cluster and Service configuration
 		            def ecsCluster = "cicd-cluster1"
-		            def appServiceName = "cicd-service"  
+		            def appServiceName = "cicd-service1"  
 		
 		            // ECS Task Definitions
 		            // def appTaskDefinition = "cicd-task"  
 		
-		            sh "aws ecs update-service --cluster ${ecsCluster} --region us-east-1 --service ${appServiceName}  --force-new-deployment"
+		            sh "aws ecs update-service --cluster ${ecsCluster} --region ap-south-1 --service ${appServiceName}  --force-new-deployment"
 		
 		    }
 		 }
